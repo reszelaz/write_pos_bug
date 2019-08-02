@@ -1,0 +1,28 @@
+import time
+import PyTango
+
+p1, p2, p3, p4 = -1, 0, 10, 11
+
+#m = PyTango.DeviceProxy('ipap1')
+m = PyTango.DeviceProxy('mot_openday_1')
+t0 = time.time()
+
+def move(end):
+    start = m.position
+    m.position = end
+    t = time.time()
+    while round(m.position) != end or m.state() == PyTango.DevState.MOVING:
+        time.sleep(1e-2)
+        if time.time() - t > 3:
+            raise Exception('bug!')
+
+def scan(start, end, stop):
+    move(start)
+    move(end)
+    move(stop)
+
+for i in range(50000):
+    #scan(p1, p4, p3)
+    #scan(p4, p1, p2)
+    move(p3)
+    move(p2)
